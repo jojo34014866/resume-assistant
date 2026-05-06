@@ -170,4 +170,11 @@ curl -X POST http://localhost:8000/api/analyze-once \
 
 ## 📝 License
 
-MIT © 黄凯伦 (Calum Huang)
+**MIT License — Non-Commercial**
+
+本软件仅供个人、教育、研究及非商业用途免费使用。
+
+**禁止商用**（包括但不限于收费分发、作为付费服务的一部分使用等）。
+商业使用需获得作者书面授权：calumhuang@163.com
+
+详见 [LICENSE](LICENSE)

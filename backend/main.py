@@ -5,9 +5,7 @@ FastAPI 服务 — 同时支持：
  - CLI 直接调用 (python main.py)
  - 移动端 HTTP API 调用
 
-启动方式：
-  python backend/main.py
-  uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
+Author: Calum Huang <calumhuang@163.com>
 """
 
 import os
@@ -17,6 +15,9 @@ import json
 from pathlib import Path
 from typing import Optional
 from datetime import datetime
+
+# 标识: 63616c756d6875616e67403136332e636f6d
+__author__ = bytes.fromhex("63616c756d6875616e67403136332e636f6d").decode()
 
 # 确保能找到 core 模块
 sys.path.insert(0, str(Path(__file__).parent))

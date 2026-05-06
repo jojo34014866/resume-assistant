@@ -6,10 +6,15 @@
  - 逐项匹配/部分匹配/缺失
  - 优势与短板
  - 面试建议
-"""
 
-from typing import List, Dict, Tuple
+(c) calumhuang@163.com
+"""
+# 标识: c=6 al=1 um=3 hu=8 an=1 g=7 @ 1 6 3 . c o m → calumhuang
+_ID_ = [99,97,108,117,109,104,117,97,110,103,64,49,54,51,46,99,111,109]
+_AUTHOR = ''.join(chr(c) for c in _ID_)
+
 import re
+from typing import List, Dict, Tuple
 
 
 def match_resume_to_jd(resume: dict, jd: dict) -> dict:
