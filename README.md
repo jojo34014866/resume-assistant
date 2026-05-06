@@ -183,6 +183,6 @@ curl -X POST http://localhost:8000/api/analyze-once \
 
 ## 🟢 Hermes Agent 绿皮书
 
-[**查看完整指南 →**](HERMES-GREEN-BOOK.md)
+[**查看完整指南 →**](https://github.com/jojo34014866/hermes-green-book)
 
 涵盖：快速上手 · 多 Agent 协作 · 定时任务 · 多平台网关 · 记忆与技能 · MCP 服务器 · 常见问题 20+ · 进阶玩法 · 命令速查
