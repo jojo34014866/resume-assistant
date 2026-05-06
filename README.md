@@ -178,3 +178,11 @@ curl -X POST http://localhost:8000/api/analyze-once \
 商业使用需获得作者书面授权：calumhuang@163.com
 
 详见 [LICENSE](LICENSE)
+
+---
+
+## 🟢 Hermes Agent 绿皮书
+
+[**查看完整指南 →**](HERMES-GREEN-BOOK.md)
+
+涵盖：快速上手 · 多 Agent 协作 · 定时任务 · 多平台网关 · 记忆与技能 · MCP 服务器 · 常见问题 20+ · 进阶玩法 · 命令速查
