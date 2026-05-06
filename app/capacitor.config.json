@@ -1,0 +1,12 @@
+{
+  "appId": "com.resume.assistant",
+  "appName": "简历助手",
+  "webDir": "www",
+  "server": {
+    "url": "http://10.0.2.2:8000/app",
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}

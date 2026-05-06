@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>简历助手</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#f0f2f5;color:#1d1d1f;min-height:100vh}
+.header{background:linear-gradient(135deg,#6366f1,#8b5cf6);padding:20px 16px 18px;text-align:center;color:#fff}
+.header h1{font-size:20px;font-weight:700;letter-spacing:.5px}
+.header p{font-size:13px;opacity:.85;margin-top:4px}
+.container{max-width:680px;margin:0 auto;padding:16px 16px 40px}
+
+/* Cards */
+.card{background:#fff;border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:box-shadow .2s}
+.card:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.card-title{font-size:15px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:7px;color:#1d1d1f}
+.card-title .ico{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.ico-resume{background:#ede9fe;color:#7c3aed}
+.ico-jd{background:#dbeafe;color:#2563eb}
+.ico-platform{background:#fef3c7;color:#d97706}
+.ico-score{background:#ecfdf5;color:#059669}
+
+/* Upload zone */
+.upload-zone{border:2px dashed #d4d4d8;border-radius:12px;padding:22px 16px;text-align:center;cursor:pointer;transition:all .2s;background:#fafbfc;position:relative;overflow:hidden}
+.upload-zone:hover{border-color:#6366f1;background:#f5f3ff}
+.upload-zone .up-icon{font-size:28px;margin-bottom:6px;display:block}
+.upload-zone .up-text{font-size:14px;font-weight:500;color:#3f3f46}
+.upload-zone .up-sub{font-size:12px;color:#a1a1aa;margin-top:3px}
+.upload-zone input[type=file]{display:none}
+.upload-status{font-size:13px;padding:8px 12px;border-radius:8px;margin-bottom:8px;display:none}
+.upload-status.ok{display:block;background:#ecfdf5;color:#059669;border:1px solid #a7f3d0}
+.upload-status.err{display:block;background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
+
+.divider{display:flex;align-items:center;gap:10px;margin:14px 0;color:#a1a1aa;font-size:12px;user-select:none}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:#e4e4e7}
+
+textarea{width:100%;padding:12px 14px;border:1.5px solid #e4e4e7;border-radius:10px;font-size:14px;line-height:1.7;resize:vertical;min-height:130px;font-family:inherit;transition:border-color .2s;background:#fafbfc}
+textarea:focus{outline:none;border-color:#6366f1;background:#fff}
+.hint{font-size:12px;color:#a1a1aa;margin-top:5px}
+
+/* Platform */
+.platform-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.pf-btn{flex:1;min-width:60px;padding:10px 6px;border:1.5px solid #e4e4e7;border-radius:10px;background:#fff;font-size:13px;cursor:pointer;text-align:center;transition:all .15s;color:#52525b}
+.pf-btn.active{background:#6366f1;color:#fff;border-color:#6366f1;font-weight:600}
+.btn-analyze{width:100%;padding:15px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:1px}
+.btn-analyze:active{transform:scale(.98);opacity:.9}
+.btn-analyze:disabled{opacity:.5;pointer-events:none}
+
+/* Loading */
+.loading{text-align:center;padding:40px 0;display:none}
+.spinner{width:36px;height:36px;border:3px solid #e4e4e7;border-top-color:#6366f1;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Results */
+.result{display:none}
+.result.show{display:block}
+
+/* Score */
+.score-row{display:flex;align-items:center;gap:16px;margin-bottom:8px}
+.score-ring{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;flex-shrink:0}
+.score-high{background:#ecfdf5;color:#059669;box-shadow:0 0 0 4px #d1fae5}
+.score-mid{background:#fffbeb;color:#d97706;box-shadow:0 0 0 4px #fde68a}
+.score-low{background:#fef2f2;color:#dc2626;box-shadow:0 0 0 4px #fecaca}
+.score-info{flex:1}
+.score-info .title{font-size:16px;font-weight:600;margin-bottom:2px}
+.score-info .sub{font-size:12px;color:#71717a;line-height:1.5}
+
+/* Match bars */
+.match-bar{display:flex;align-items:center;gap:6px;margin-bottom:6px;font-size:13px}
+.match-bar .label{width:52px;font-weight:500;color:#52525b;flex-shrink:0}
+.match-bar .track{flex:1;height:6px;background:#f4f4f5;border-radius:3px;overflow:hidden}
+.match-bar .fill{height:100%;border-radius:3px;transition:width .5s ease}
+.fill-full{background:#22c55e}.fill-part{background:#f59e0b}.fill-gap{background:#ef4444}
+.match-bar .count{width:28px;text-align:right;font-weight:600;flex-shrink:0}
+
+/* Greeting card - prominent */
+.greet-card{background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1.5px solid #c4b5fd;border-radius:14px;padding:18px;margin-bottom:14px;position:relative}
+.greet-card .g-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.greet-card .g-title{font-size:15px;font-weight:700;color:#5b21b6}
+.btn-copy{font-size:12px;padding:6px 14px;border-radius:8px;border:1px solid #c4b5fd;background:#fff;color:#5b21b6;cursor:pointer;font-weight:500;transition:all .2s}
+.btn-copy:active{background:#c4b5fd;color:#fff}
+.btn-copy.copied{background:#22c55e;color:#fff;border-color:#22c55e}
+.greet-text{font-size:14px;line-height:1.8;color:#3f3f46;white-space:pre-wrap;background:#fff;border-radius:10px;padding:14px}
+.greet-tabs{display:flex;gap:4px;margin-bottom:10px}
+.greet-tab{flex:1;padding:7px;text-align:center;font-size:12px;border-radius:8px;cursor:pointer;background:#ede9fe;color:#6d28d9;font-weight:500;transition:all .15s}
+.greet-tab.active{background:#7c3aed;color:#fff}
+
+/* Warning card */
+.warn-item{display:flex;gap:10px;padding:12px 0;border-bottom:1px solid #f4f4f5;align-items:flex-start}
+.warn-item:last-child{border-bottom:none}
+.warn-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-top:1px}
+.warn-danger{background:#fee2e2;color:#dc2626}
+.warn-info{background:#dbeafe;color:#2563eb}
+.warn-warn{background:#fef3c7;color:#d97706}
+.warn-body{flex:1;font-size:13px;line-height:1.6;color:#3f3f46}
+.warn-body strong{display:block;font-size:13px;margin-bottom:2px}
+
+/* Match items */
+.match-item{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border-radius:10px;font-size:13px;line-height:1.5;margin-bottom:4px}
+.match-item.full{background:#f0fdf4}
+.match-item.partial{background:#fffbeb}
+.match-item.missing{background:#fef2f2}
+.match-item .mdot{width:7px;height:7px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.match-item.full .mdot{background:#22c55e}
+.match-item.partial .mdot{background:#f59e0b}
+.match-item.missing .mdot{background:#ef4444}
+
+footer{text-align:center;padding:20px;font-size:12px;color:#a1a1aa}
+
+@media(max-width:480px){
+  .container{padding:10px 10px 30px}
+  .card{padding:14px;border-radius:12px}
+  textarea{font-size:16px}
+  .score-ring{width:60px;height:60px;font-size:22px}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>简历助手</h1>
+  <p>匹配分析 · 招呼语生成 · 注意事项提醒</p>
+</div>
+
+<div class="container">
+
+  <!-- 简历 -->
+  <div class="card">
+    <div class="card-title"><span class="ico ico-resume">📄</span>我的简历</div>
+    <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+      <span class="up-icon">📂</span>
+      <div class="up-text">上传简历文件</div>
+      <div class="up-sub">PDF · Word · Markdown · TXT</div>
+      <input type="file" id="fileInput" accept=".pdf,.docx,.doc,.md,.txt,.text" onchange="handleFile(event)">
+    </div>
+    <div class="upload-status" id="uploadStatus"></div>
+    <div class="divider"><span>或直接粘贴</span></div>
+    <textarea id="resume" placeholder="粘贴简历内容...&#10;&#10;例：张三 | 前端工程师 | 3年&#10;技能: React, Vue, TypeScript&#10;经历: 2021-2024 某公司 | 前端开发"></textarea>
+  </div>
+
+  <!-- JD -->
+  <div class="card">
+    <div class="card-title"><span class="ico ico-jd">💼</span>岗位描述</div>
+    <div class="upload-zone" id="jdUploadZone" onclick="document.getElementById('jdFileInput').click()">
+      <span class="up-icon">📸</span>
+      <div class="up-text">上传 BOSS直聘 截图</div>
+      <div class="up-sub">自动 OCR 识别 · JPG / PNG</div>
+      <input type="file" id="jdFileInput" accept=".jpg,.jpeg,.png,.bmp,.tiff,.webp" onchange="handleJdImage(event)">
+    </div>
+    <div class="upload-status" id="jdUploadStatus"></div>
+    <div class="divider"><span>或直接粘贴</span></div>
+    <textarea id="jd" placeholder="粘贴岗位描述...&#10;&#10;例：【岗位】高级后端工程师&#10;【任职要求】&#10;1. 5年以上经验&#10;2. 精通Python"></textarea>
+  </div>
+
+  <!-- 平台 + 分析 -->
+  <div class="card">
+    <div class="card-title"><span class="ico ico-platform">🎯</span>目标平台</div>
+    <div class="platform-row">
+      <button class="pf-btn active" data-platform="boss">BOSS直聘</button>
+      <button class="pf-btn" data-platform="linkedin">LinkedIn</button>
+      <button class="pf-btn" data-platform="lagou">拉勾</button>
+      <button class="pf-btn" data-platform="default">通用</button>
+    </div>
+    <button class="btn-analyze" id="analyzeBtn" onclick="doAnalyze()">开始分析</button>
+  </div>
+
+  <!-- 加载 -->
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <div style="color:#71717a;font-size:14px">正在分析中...</div>
+  </div>
+
+  <!-- 结果 -->
+  <div class="result" id="result">
+
+    <!-- 分数 -->
+    <div class="card" style="text-align:center">
+      <div class="score-row">
+        <div class="score-ring score-high" id="scoreRing">0</div>
+        <div class="score-info" style="text-align:left">
+          <div class="title" id="scoreTitle">—</div>
+          <div class="sub" id="scoreSub"></div>
+        </div>
+      </div>
+      <div class="match-bar"><span class="label">匹配</span><div class="track"><div class="fill fill-full" id="barMatch" style="width:0%"></div></div><span class="count" id="cntMatch">0</span></div>
+      <div class="match-bar"><span class="label">部分</span><div class="track"><div class="fill fill-part" id="barPart" style="width:0%"></div></div><span class="count" id="cntPart">0</span></div>
+      <div class="match-bar"><span class="label">缺失</span><div class="track"><div class="fill fill-gap" id="barGap" style="width:0%"></div></div><span class="count" id="cntGap">0</span></div>
+    </div>
+
+    <!-- 招呼语（突出显示） -->
+    <div class="greet-card">
+      <div class="g-header">
+        <div class="g-title">💬 打招呼语</div>
+        <button class="btn-copy" id="copyBtn" onclick="copyGreeting()">复制</button>
+      </div>
+      <div class="greet-tabs">
+        <button class="greet-tab active" onclick="switchGreetTab('short',this)">短版</button>
+        <button class="greet-tab" onclick="switchGreetTab('full',this)">完整版</button>
+      </div>
+      <div class="greet-text" id="greetContent"></div>
+    </div>
+
+    <!-- 注意事项 -->
+    <div class="card">
+      <div class="card-title"><span class="ico ico-resume">⚠️</span>注意事项</div>
+      <div id="warnList"></div>
+    </div>
+
+    <!-- 匹配详情 -->
+    <div class="card">
+      <div class="card-title"><span class="ico ico-jd">🔍</span>匹配详情</div>
+      <div id="matchItems"></div>
+    </div>
+
+  </div>
+
+</div>
+
+<footer>简历助手 · 求职加速器</footer>
+
+<script>
+let platform='boss',greetShort='',greetFull='',currentGreet='short';
+
+document.querySelectorAll('.pf-btn').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.pf-btn').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');platform=b.dataset.platform;
+});
+
+// ── 简历上传 ──
+const zone=document.getElementById('uploadZone');
+['dragenter','dragover','dragleave','drop'].forEach(e=>zone.addEventListener(e,ev=>ev.preventDefault()));
+zone.addEventListener('dragover',()=>zone.classList.add('dragover'));
+zone.addEventListener('dragleave',()=>zone.classList.remove('dragover'));
+zone.addEventListener('drop',ev=>{zone.classList.remove('dragover');const f=ev.dataTransfer.files[0];if(f)uploadFile(f)});
+function handleFile(ev){const f=ev.target.files[0];if(f)uploadFile(f)}
+async function uploadFile(file){
+  const st=document.getElementById('uploadStatus'),z=document.getElementById('uploadZone');
+  st.className='upload-status';st.textContent='解析中...';st.style.display='block';
+  const fd=new FormData();fd.append('file',file);
+  try{
+    const r=await(await fetch('/api/resume/upload',{method:'POST',body:fd})).json();
+    if(r.error){st.className='upload-status err';st.textContent='解析失败: '+r.error;return}
+    const d=r.resume;
+    document.getElementById('resume').value=[d.name||'',d.title||'','技能: '+(d.hard_skills||[]).join(', '),d.raw_text||''].filter(Boolean).join('\n');
+    st.className='upload-status ok';st.textContent='✅ 解析成功  '+(d.name||'')+' | '+(d.title||'')+' | '+(d.hard_skills||[]).length+'项技能';
+    z.style.borderColor='#22c55e';
+  }catch(e){st.className='upload-status err';st.textContent='上传失败'}
+}
+
+// ── JD OCR ──
+const jz=document.getElementById('jdUploadZone');
+['dragenter','dragover','dragleave','drop'].forEach(e=>jz.addEventListener(e,ev=>ev.preventDefault()));
+jz.addEventListener('dragover',()=>jz.classList.add('dragover'));
+jz.addEventListener('dragleave',()=>jz.classList.remove('dragover'));
+jz.addEventListener('drop',ev=>{jz.classList.remove('dragover');const f=ev.dataTransfer.files[0];if(f)ocrJdImage(f)});
+function handleJdImage(ev){const f=ev.target.files[0];if(f)ocrJdImage(f)}
+async function ocrJdImage(file){
+  const st=document.getElementById('jdUploadStatus'),z=document.getElementById('jdUploadZone');
+  st.className='upload-status';st.textContent='识别中...';st.style.display='block';
+  const fd=new FormData();fd.append('file',file);
+  try{
+    const r=await(await fetch('/api/ocr',{method:'POST',body:fd})).json();
+    if(r.error){st.className='upload-status err';st.textContent='识别失败: '+r.error;return}
+    document.getElementById('jd').value=r.text;
+    st.className='upload-status ok';st.textContent='✅ '+r.message;z.style.borderColor='#22c55e';
+  }catch(e){st.className='upload-status err';st.textContent='识别失败'}
+}
+
+// ── 分析 ──
+async function doAnalyze(){
+  const resume=document.getElementById('resume').value.trim(),jd=document.getElementById('jd').value.trim();
+  if(!resume||resume.length<10){alert('请填写简历内容');return}
+  if(!jd||jd.length<10){alert('请填写岗位描述');return}
+  const btn=document.getElementById('analyzeBtn');btn.disabled=true;btn.textContent='分析中...';
+  document.getElementById('loading').style.display='block';document.getElementById('result').classList.remove('show');
+  try{
+    const fd=new URLSearchParams();fd.append('resume_text',resume);fd.append('jd_text',jd);fd.append('platform',platform);
+    const d=await(await fetch('/api/analyze-once',{method:'POST',body:fd})).json();
+    if(d.error){alert(d.error);return}
+    render(d);
+  }catch(e){alert('请求失败，请确认服务已启动')}
+  finally{btn.disabled=false;btn.textContent='开始分析';document.getElementById('loading').style.display='none'}
+}
+
+function render(d){
+  const m=d.match,g=d.greeting,j=d.job;
+  greetShort=g.short||'';greetFull=g.full||'';currentGreet='short';
+
+  // Score
+  const ring=document.getElementById('scoreRing');
+  ring.textContent=m.overall_score;
+  ring.className='score-ring '+(m.overall_score>=80?'score-high':m.overall_score>=60?'score-mid':'score-low');
+  document.getElementById('scoreTitle').textContent=(j.company||'')+' · '+(j.title||'岗位');
+  document.getElementById('scoreSub').textContent=m.summary||'';
+
+  // Bars
+  const total=Math.max(m.matches.length+m.partial_matches.length+m.gaps.length,1);
+  document.getElementById('barMatch').style.width=(m.matches.length/total*100)+'%';
+  document.getElementById('barPart').style.width=(m.partial_matches.length/total*100)+'%';
+  document.getElementById('barGap').style.width=(m.gaps.length/total*100)+'%';
+  document.getElementById('cntMatch').textContent=m.matches.length;
+  document.getElementById('cntPart').textContent=m.partial_matches.length;
+  document.getElementById('cntGap').textContent=m.gaps.length;
+
+  // Greeting
+  switchGreetTab('short',document.querySelector('.greet-tab'));
+
+  // Match details
+  const mh=[];
+  m.matches.forEach(i=>mh.push(`<div class="match-item full"><span class="mdot"></span><div><strong>✓</strong> ${esc(i.jd_requirement)}<br><span style="color:#71717a;font-size:12px">${esc(i.resume_match)}</span></div></div>`));
+  m.partial_matches.forEach(i=>mh.push(`<div class="match-item partial"><span class="mdot"></span><div><strong>≈</strong> ${esc(i.jd_requirement)}<br><span style="color:#71717a;font-size:12px">${esc(i.resume_match)}</span></div></div>`));
+  m.gaps.forEach(i=>mh.push(`<div class="match-item missing"><span class="mdot"></span><div><strong>✗</strong> ${esc(i.jd_requirement)}</div></div>`));
+  document.getElementById('matchItems').innerHTML=mh.join('')||'<div style="color:#a1a1aa;text-align:center;padding:16px">暂无详情</div>';
+
+  // Warnings only — data-driven from actual analysis
+  const warns=[];
+  // Risk flags from generator
+  (g.risk_flags||[]).forEach(r=>warns.push({icon:'warn-danger',sym:'⚠️',title:'风险提示',body:r}));
+  // Gaps prompting action
+  if(m.gaps.length>0){
+    const gapNames=m.gaps.slice(0,3).map(x=>x.jd_requirement.slice(0,30)).join('、');
+    warns.push({icon:'warn-warn',sym:'📌',title:'需关注',body:`缺失的关键要求：${gapNames}。建议在沟通中提前准备应对方案。`});
+  }
+  if(m.partial_matches.length>0){
+    const partNames=m.partial_matches.slice(0,2).map(x=>x.jd_requirement.slice(0,30)).join('、');
+    warns.push({icon:'warn-info',sym:'💡',title:'可优化',body:`部分匹配项：${partNames}。可在简历中补充相关细节提升匹配度。`});
+  }
+  // Salary warning
+  if(!j.salary_range||j.salary_range.length<3) warns.push({icon:'warn-info',sym:'💰',title:'薪资未标注',body:'JD未明确薪资范围，建议在初步沟通时尽早确认。'});
+  // Location mismatch
+  if(m.gaps.some(x=>x.category==='location')) warns.push({icon:'warn-danger',sym:'📍',title:'地点问题',body:'工作地点与你的所在地可能不一致，需确认是否支持远程办公或 relocation。'});
+
+  document.getElementById('warnList').innerHTML=warns.map(w=>`<div class="warn-item"><div class="warn-icon ${w.icon}">${w.sym}</div><div class="warn-body"><strong>${w.title}</strong>${esc(w.body)}</div></div>`).join('')||'<div style="color:#a1a1aa;text-align:center;padding:16px">暂无明显注意事项</div>';
+
+  document.getElementById('result').classList.add('show');
+  document.getElementById('result').scrollIntoView({behavior:'smooth'});
+}
+
+function switchGreetTab(tab,el){
+  currentGreet=tab;
+  document.querySelectorAll('.greet-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('greetContent').textContent=tab==='short'?greetShort:greetFull;
+}
+
+function copyGreeting(){
+  const text=currentGreet==='short'?greetShort:greetFull;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.getElementById('copyBtn');btn.textContent='已复制 ✓';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='复制';btn.classList.remove('copied')},1500);
+  });
+}
+
+function esc(s){return(s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+</script>
+
+</body>
+</html>
