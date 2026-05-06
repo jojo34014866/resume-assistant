@@ -5,7 +5,7 @@ FastAPI 服务 — 同时支持：
  - CLI 直接调用 (python main.py)
  - 移动端 HTTP API 调用
 
-Author: Calum Huang <calumhuang@163.com>
+Author: calumhuang <calumhuang@163.com>
 """
 
 import os
